@@ -4,7 +4,6 @@ def main():
     import pygame
     import random
     import datetime
-    from time import sleep
 
     mat =  [[0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
@@ -61,28 +60,28 @@ def main():
             for j in range(random.randint(diff[0],diff[1])):
                 i[random.randint(0,8)] = 0
 
-    bg_colour = (233,234,234) #lightblue
-    line_colour = (127,157,177) #aqua
-    line_colour_bold = (52,64,66) #dark blue
-    text_colour = (52,64,66) #DARKblue
 
-    def insert(position):
+    def insert(position, counter, tet):
         i,j = position[1], position[0]
         myfont = pygame.font.Font('./Data/fonts/Fredoka One.ttf', 30)
         while 1:
             clock.tick(60)
             for event in pygame.event.get():
+                if event.type == pygame.USEREVENT: 
+                    counter += timed
+                    t = str(counter)
+                    tet = t[11:19]
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
                 if(mat[i-1][j-1] != 0):
-                    return
+                    return counter
                 if event.type == pygame.KEYDOWN:
-                    if(event.key == pygame.K_0): #checking with 0
+                    if(event.key == pygame.K_BACKSPACE): #checking with 0
                         usermat[i-1][j-1] = 0
                         pygame.draw.rect(win, bg_colour,(position[0]*50 + 5, position[1]*50 + 5,40,40))
                         pygame.display.update(50,50,450,450)
-                        return
+                        return counter
                     if(48 < event.key < 58):  #We are checking for valid input
                         pygame.draw.rect(win, bg_colour, (position[0]*50 + 5, position[1]*50+ 5,40,40))
                         #pygame.draw.rect(window,bg_colour,(startx,starty,width,height))
@@ -90,11 +89,16 @@ def main():
                         win.blit(value, (position[0]*50 +17, position[1]*50 + 5))
                         usermat[i-1][j-1] = event.key - 48
                         pygame.display.update(50,50,450,450)
-                        return
+                        return counter
                     else:
                         pygame.draw.rect(win, bg_colour,(position[0]*50 + 5, position[1]*50 + 5,40,40))
                         pygame.display.update(50,50,450,450)
-                        return
+                        return counter
+            tt = myfont.render(tet, True, (bg_colour))
+            tt = pygame.transform.rotate(tt, 270)  # Flip the text vertically.
+            win.blit(tt,(552,40))
+            pygame.display.update(550,0,45,200)
+            win.blit(side,(550,0))
 
     def checkclickdiff(x,y):
         if x in range(189,341) and y in range(269,311):
@@ -143,11 +147,11 @@ def main():
         return 0
 
     def checkclickmain(x,y):
-        if x in range(199,336) and y in range(349,401):
+        if x in range(199,336) and y in range(389,441):
             return diffselect(1)
         return 1
 
-    def bg(bg_img,N):
+    def bg(bg_img,side,N):
         i = 0
         height = 690
         while N:
@@ -155,20 +159,17 @@ def main():
             win.fill((0,0,0))
             win.blit(bg_img,(0,i))
             win.blit(bg_img,(0,-height+i))
+            win.blit(side,(550,0))
             if (i > height):
                 i=0
                 win.blit(bg_img,(0,-height+i))
-            i+=0.15
+            i += 0.15
             logo = pygame.image.load('./Data/Images/lo1.png').convert_alpha()
             win.blit(logo, (91,60))
-            pygame.draw.rect(win,(64,71,92),(200,350,135,50),0,8)
-            pygame.draw.rect(win,(line_colour),(200,350,135,50),4,8)
+            pygame.draw.rect(win,(64,71,92),(200,390,135,50),0,8)
+            pygame.draw.rect(win,(line_colour),(200,390,135,50),4,8)
             f = myfont.render('PLAY!',True,line_colour)
-            win.blit(f,(222,356))
-            pygame.draw.rect(win,(64,71,92),(145,405,245,50),0,8)
-            pygame.draw.rect(win,(line_colour),(145,405,245,50),4,8)
-            f = myfont.render('HIGH SCORES',True,line_colour)
-            win.blit(f,(170,411))
+            win.blit(f,(222,396))
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -191,9 +192,9 @@ def main():
                 win.blit(bg_img,(0,-height+o))
                 win.blit(bg2,(0,0))
                 if (o > height):
-                    o=0
+                    o = 0
                     win.blit(bg_img,(0,-height+o))
-                o+=0.15 
+                o += 0.15 
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  #pressed esc key
@@ -248,10 +249,6 @@ def main():
                             win.blit(wrongbl,(50+50*j,50+50*i))
                         else:
                             win.blit(wrong,(50+50*j,50+50*i))
-                #elif question_mat[i][j] != 0 and usermat[i][j] != 0:
-                    #print(i,j,'already filled in')
-                #else:
-                    #print(i,j,'not filled in')
         pygame.display.update()
         while N:
             clock.tick(144)
@@ -291,10 +288,10 @@ def main():
                         s3 = '2.Only use each number once in each row, column, & grid'
                         s4 = '3.To fill in a number, click an empty box & enter desired number'
                         s5 = '4.To change a number, click the box and enter another number'
-                        s6 = '5.To clear a box, click & enter 0'
+                        s6 = '5.To clear a box, click & Press BackSpace'
                         s7 = '6.Use Esc key to return to main menu'
-                        s8 = '7.Click Check button to Check your answers'
-                        s9 = '8.Click Check button to Submit your completed Sudoku'
+                        s8 = '7.Click Check button to Check answers'
+                        s9 = '8.Each Check adds a minute to your Time'
                         v1 = f.render(s1,True,(line_colour_bold))
                         v2 = f.render(s2,True,(line_colour_bold))
                         v3 = f.render(s3,True,(line_colour_bold))
@@ -328,11 +325,15 @@ def main():
         return
 
 
+    bg_colour = (233,234,234) #lightblue
+    line_colour = (127,157,177) #aqua
+    line_colour_bold = (52,64,66) #dark blue
+    text_colour = (52,64,66) #DARKblue
 
     pygame.init()
     pygame.mixer.init()
     pygame.mixer.music.load("./Data/sounds/click.wav")
-    win = pygame.display.set_mode((550,690))
+    win = pygame.display.set_mode((590,690))
     pygame.display.set_caption("Sudoku")
     icon = pygame.image.load('./Data/Images/icon.png').convert_alpha()
     pygame.display.set_icon(icon)
@@ -340,9 +341,9 @@ def main():
     clock = pygame.time.Clock()
     myfont = pygame.font.Font('./Data/fonts/Fredoka One.ttf', 30)
     bg_img = pygame.image.load('./Data/Images/background.png').convert()
-    o = bg(bg_img,1)
+    side = pygame.image.load('./Data/Images/sideblock.png').convert()
+    o = bg(bg_img,side,1)
     usermat = copy.deepcopy(mat)
-
 
 
 
@@ -374,10 +375,10 @@ def main():
     s3 = '2.Only use each number once in each row, column, & grid'
     s4 = '3.To fill in a number, click an empty box & enter desired number'
     s5 = '4.To change a number, click the box and enter another number'
-    s6 = '5.To clear a box, click & enter 0'
+    s6 = '5.To clear a box, click & Press BackSpace'
     s7 = '6.Use Esc key to return to main menu'
-    s8 = '7.Click Check button to Check your answers'
-    s9 = '8.Click Check button to Submit your completed Sudoku'
+    s8 = '7.Click Check button to Check answers'
+    s9 = '8.Each Check adds a minute to your Time'
     v1 = f.render(s1,True,(line_colour_bold))
     v2 = f.render(s2,True,(line_colour_bold))
     v3 = f.render(s3,True,(line_colour_bold))
@@ -403,12 +404,17 @@ def main():
     v10 = f.render('CHECK',True,(line_colour))
     win.blit(v10,(410,623))
     pygame.display.update()
-
-
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
+    global text, counter, timed
+    counter, timed = datetime.datetime(2022, 1, 1, 0, 0, 0), datetime.timedelta(seconds = 1)
+    text = ''
 
     while 1:
-        clock.tick(240) #set fps to 30
         for event in pygame.event.get():
+            if event.type == pygame.USEREVENT: 
+                counter += timed
+                t = str(counter)
+                text = t[11:19]
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 if pos[1] in range(49,501) and pos[0] in range (49,501):   #insert new value
@@ -418,14 +424,26 @@ def main():
                         pygame.mixer.music.play()
                         win.blit(selindicator,(j*50 + 22, i*50 + 5))
                         pygame.display.update(50,50,450,450)
-                    insert((pos[0]//50, pos[1]//50))
+                    counter = insert((pos[0]//50, pos[1]//50),counter,tet = text)
                 if pos[0] in range(395,476) and pos[1] in range(616,650):  #check button
+                    counter = counter + datetime.timedelta(minutes=1)
                     check(solved_mat,mat,usermat,o)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  #pressed esc key
                 main()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
+        tt = myfont.render(text, True, (bg_colour))
+        tt = pygame.transform.rotate(tt, 270)  # Flip the text vertically.
+        win.blit(tt,(552,40))
+        pygame.display.update(550,0,45,200)
+        win.blit(side,(550,0))
+        clock.tick(60)
     return
+
 if __name__ == "__main__":
     main()
+# except:
+#     print(Exception)
+# else:
+#     print('no error')
