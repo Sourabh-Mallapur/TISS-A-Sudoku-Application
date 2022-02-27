@@ -4,6 +4,7 @@ def main():
     import pygame
     import random
     import datetime
+    from highscores import highscores,timings,displayhighscore
 
     mat =  [[0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
@@ -30,6 +31,7 @@ def main():
                     return False
         return True
 
+    diff = (0,0,0)
     t = [1,2,3,4,5,6,7,8,9]
     random.shuffle(t)
     mat[0] = t
@@ -59,7 +61,6 @@ def main():
         for i in mat:
             for j in range(random.randint(diff[0],diff[1])):
                 i[random.randint(0,8)] = 0
-
 
     def insert(position, counter, tet):
         i,j = position[1], position[0]
@@ -91,7 +92,7 @@ def main():
                         pygame.display.update(50,50,450,450)
                         return counter
                     else:
-                        pygame.draw.rect(win, bg_colour,(position[0]*50 + 5, position[1]*50 + 5,40,40))
+                        pygame.draw.rect(win, bg_colour,(position[0]*50 + 21, position[1]*50 + 5,14,7))
                         pygame.display.update(50,50,450,450)
                         return counter
             tt = myfont.render(tet, True, (bg_colour))
@@ -101,21 +102,23 @@ def main():
             win.blit(side,(550,0))
 
     def checkclickdiff(x,y):
+        nonlocal diff
         if x in range(189,341) and y in range(269,311):
-            diff = (1,2)
+            diff = (1,2, 'Easy')
             emptyspaces(mat,diff) 
             return 0
         if x in range(189,341) and y in range(319,361):
-            diff = (2,3)
+            diff = (2,3, 'Medium')
             emptyspaces(mat,diff) 
             return 0
         if x in range(189,341) and y in range(369,411):
-            diff = (2,4)
+            diff = (2,4, 'Hard')
             emptyspaces(mat,diff) 
             return 0
         return 1
 
-    def diffselect(N):
+    def diffselect(N,o):
+        r = displayhighscore()
         pygame.draw.rect(win,line_colour,(130,124,272,340),0,13)
         pygame.draw.rect(win,line_colour_bold,(130,124,272,340),6,13)
         pygame.draw.rect(win,(64,71,92),(190,270,150,40),0,10)
@@ -134,8 +137,16 @@ def main():
         win.blit(t3,(226,271))
         win.blit(t4,(203,321))
         win.blit(t5,(225,371))
+        for i in r:
+            if i[1] == '99:99:99':
+                i[1] = 'No High Score yet'
+        font1 = pygame.font.Font('./Data/fonts/Fredoka One.ttf',18)
+        for i in range(3):
+            e = r[i][0] + ': ' + r[i][1] 
+            f = font1.render(e,True,(line_colour_bold))
+            win.blit(f,(40,590 + 25*i))
         while N:
-            clock.tick(30)
+            clock.tick(144)
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -143,27 +154,38 @@ def main():
                     exit()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    N = checkclickdiff(pos[0],pos[1])
+                    N = checkclickdiff(pos[0], pos[1])
+        bg_img = pygame.image.load('./Data/Images/background.png').convert()
+        win.blit(bg_img,(0,-690+o))
+        win.blit(bg_img,(0,o))
+        pygame.display.update()
         return 0
 
-    def checkclickmain(x,y):
+    def checkclickmain(x,y,i):
         if x in range(199,336) and y in range(389,441):
-            return diffselect(1)
+            return diffselect(1,i)
         return 1
 
-    def bg(bg_img,side,N):
-        i = 0
+    def bg(bg_img,sidemain,N):
+        i, g = 0, 0
         height = 690
         while N:
             clock.tick(144)
             win.fill((0,0,0))
             win.blit(bg_img,(0,i))
             win.blit(bg_img,(0,-height+i))
-            win.blit(side,(550,0))
+            win.blit(sidemain,(550,g))
+            win.blit(sidemain,(550,-height+g))
             if (i > height):
                 i=0
                 win.blit(bg_img,(0,-height+i))
-            i += 0.15
+            i += 0.17
+            if (g > height):
+                g = 0
+                win.blit(sidemain,(550,-height+g))
+            g += 0.3
+            #high score part
+            # f = myfont.render('')
             logo = pygame.image.load('./Data/Images/lo1.png').convert_alpha()
             win.blit(logo, (91,60))
             pygame.draw.rect(win,(64,71,92),(200,390,135,50),0,8)
@@ -177,31 +199,45 @@ def main():
                     exit()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    N = checkclickmain(pos[0],pos[1])
+                    N = checkclickmain(pos[0],pos[1],i)
         return i
 
     def check(solved_mat,question_mat,usermat,o):
         if usermat == solved_mat:
+            y = str(counter - datetime.timedelta(minutes=1))
+            y = y[11:19]
+            highscoreornot = highscores(diff[2],y)
+            font = pygame.font.Font('./Data/fonts/fredoka One.ttf',25)
             height = 690
             bg_img = pygame.image.load('./Data/Images/background.png').convert()
             bg2 = pygame.image.load('./Data/Images/oncompletion.png').convert_alpha()
+            pygame.display.update(550,0,40,690)
             while 1:
                 clock.tick(144)  #set fps to 144
                 win.fill((0,0,0))
                 win.blit(bg_img,(0,o))
                 win.blit(bg_img,(0,-height+o))
                 win.blit(bg2,(0,0))
+                f = font.render(y,True,(255,254,254))
+                win.blit(f,(228,317))
+                if highscoreornot:
+                    f = myfont.render('NEW HIGH SCORE!',True,(255,254,254))
+                    f = pygame.transform.rotate(f, random.choice(range(-4,5,1))) 
+                    win.blit(f,(147,347))
+                win.blit(sidemain,(550,o))
+                win.blit(sidemain,(550,-height+o))
                 if (o > height):
                     o = 0
                     win.blit(bg_img,(0,-height+o))
-                o += 0.15 
+                    win.blit(sidemain,(550,-height+o))
+                o += 0.17
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  #pressed esc key
                         main()
                     if event.type == pygame.QUIT:
-                        pygame.quit()  
-                        return                  
+                        pygame.quit()
+                        return
             return
 
 
@@ -341,10 +377,11 @@ def main():
     clock = pygame.time.Clock()
     myfont = pygame.font.Font('./Data/fonts/Fredoka One.ttf', 30)
     bg_img = pygame.image.load('./Data/Images/background.png').convert()
+    sidemain = pygame.image.load('./Data/Images/sideblock1.png').convert()
     side = pygame.image.load('./Data/Images/sideblock.png').convert()
-    o = bg(bg_img,side,1)
+    global o
+    o = bg(bg_img,sidemain,1)
     usermat = copy.deepcopy(mat)
-
 
 
 #drawing the lines
@@ -408,7 +445,6 @@ def main():
     global text, counter, timed
     counter, timed = datetime.datetime(2022, 1, 1, 0, 0, 0), datetime.timedelta(seconds = 1)
     text = ''
-
     while 1:
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT: 
@@ -436,14 +472,10 @@ def main():
         tt = myfont.render(text, True, (bg_colour))
         tt = pygame.transform.rotate(tt, 270)  # Flip the text vertically.
         win.blit(tt,(552,40))
-        pygame.display.update(550,0,45,200)
+        pygame.display.update(550,0,45,690)
         win.blit(side,(550,0))
         clock.tick(60)
     return
 
 if __name__ == "__main__":
-    main()
-# except:
-#     print(Exception)
-# else:
-#     print('no error')
+    main() 
