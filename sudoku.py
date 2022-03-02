@@ -6,7 +6,7 @@ def main():
     import datetime
     from highscores import highscores,timings,displayhighscore
 
-    mat =  [[0,0,0,0,0,0,0,0,0],
+    mat =  [[0,0,0,0,0,0,0,0,0], #empty matrix
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
@@ -16,34 +16,34 @@ def main():
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0]]
 
-    def isSafe(row, col, num):
+    def isSafe(row, col, num):       #function to check if num is ok to place at a row and column
         for x in range(9):
             if mat[row][x] == num:
                 return False
         for x in range(9):
             if mat[x][col] == num:
                 return False
-        startRow = row - row % 3
-        startCol = col - col % 3
+        Row = row - row % 3  #given any row number returns the row number of the leftmost row of the 3x3 matrix
+        Col = col - col % 3  #given any col number returns the col number of the topmost col of the 3x3 matrix
         for i in range(3):
             for j in range(3):
-                if mat[i + startRow][j + startCol] == num:
+                if mat[i + Row][j + Col] == num:
                     return False
         return True
 
     diff = (0,0,0)
-    t = [1,2,3,4,5,6,7,8,9]
+    t = [1,2,3,4,5,6,7,8,9] # inserts a shuffled row to the matrix
     random.shuffle(t)
     mat[0] = t
 
-    def solve(mat,row,col):
-        if (col == 9 and row == 8):
+    def solve(mat,row,col):                 #function to solve the sudoku
+        if (col == 9 and row == 8):         #end check
             return True
-        if col == 9:
+        if col == 9:           #row increment
             row += 1
             col = 0
-        if mat[row][col] > 0:
-            return solve(mat,row,col+1)
+        # if mat[row][col] > 0:
+            # return solve(mat,row,col+1)
         t = [x for x in range(1,10)]
         random.shuffle(t)
         for x in t:
@@ -55,35 +55,35 @@ def main():
         return False
 
     solve(mat,1,0)
-    solved_mat = copy.deepcopy(mat)
+    solved_mat = copy.deepcopy(mat)    #something to store the solved matrix
 
     def emptyspaces(mat,diff):
         for i in mat:
-            for j in range(random.randint(diff[0],diff[1])):
+            for j in range(random.randint(diff[0],diff[1])):  #editing the matrix to remove some elments
                 i[random.randint(0,8)] = 0
 
-    def insert(position, counter, tet):
+    def insert(position, counter, tet): # counter, tet responsable for time tracking
         i,j = position[1], position[0]
         myfont = pygame.font.Font('./Data/fonts/Fredoka One.ttf', 30)
         while 1:
             clock.tick(60)
             for event in pygame.event.get():
-                if event.type == pygame.USEREVENT: 
-                    counter += timed
+                if event.type == pygame.USEREVENT: #time increment
+                    counter += timed             #time related stuff
                     t = str(counter)
                     tet = t[11:19]
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
-                if(mat[i-1][j-1] != 0):
+                if(mat[i-1][j-1] != 0):  #if number is alredy entered
                     return counter
                 if event.type == pygame.KEYDOWN:
-                    if(event.key == pygame.K_BACKSPACE): #checking with 0
-                        usermat[i-1][j-1] = 0
+                    if(event.key == pygame.K_BACKSPACE): #Backspace is clear
+                        usermat[i-1][j-1] = 0  #sets value as 0
                         pygame.draw.rect(win, bg_colour,(position[0]*50 + 5, position[1]*50 + 5,40,40))
                         pygame.display.update(50,50,450,450)
                         return counter
-                    if(48 < event.key < 58):  #We are checking for valid input
+                    if(48 < event.key < 58):  # checking for valid input
                         pygame.draw.rect(win, bg_colour, (position[0]*50 + 5, position[1]*50+ 5,40,40))
                         #pygame.draw.rect(window,bg_colour,(startx,starty,width,height))
                         value = myfont.render(str(event.key-48), True, (85,120,109))
@@ -91,7 +91,7 @@ def main():
                         usermat[i-1][j-1] = event.key - 48
                         pygame.display.update(50,50,450,450)
                         return counter
-                    else:
+                    else:     # to clear selindicator
                         pygame.draw.rect(win, bg_colour,(position[0]*50 + 21, position[1]*50 + 5,14,7))
                         pygame.display.update(50,50,450,450)
                         return counter
@@ -118,8 +118,8 @@ def main():
         return 1
 
     def diffselect(N,o):
-        r = displayhighscore()
-        pygame.draw.rect(win,line_colour,(130,124,272,340),0,13)
+        r = displayhighscore()     #function to display highscores
+        pygame.draw.rect(win,line_colour,(130,124,272,340),0,13)                  #buttons!!!!!
         pygame.draw.rect(win,line_colour_bold,(130,124,272,340),6,13)
         pygame.draw.rect(win,(64,71,92),(190,270,150,40),0,10)
         pygame.draw.rect(win,(line_colour_bold),(190,270,150,40),3,10)
@@ -163,7 +163,7 @@ def main():
 
     def checkclickmain(x,y,i):
         if x in range(199,336) and y in range(389,441):
-            return diffselect(1,i)
+            return diffselect(1,i)                       #check if play is clicked
         return 1
 
     def bg(bg_img,sidemain,N):
@@ -172,7 +172,7 @@ def main():
         while N:
             clock.tick(144)
             win.fill((0,0,0))
-            win.blit(bg_img,(0,i))
+            win.blit(bg_img,(0,i))              #code for looping background
             win.blit(bg_img,(0,-height+i))
             win.blit(sidemain,(550,g))
             win.blit(sidemain,(550,-height+g))
@@ -191,7 +191,7 @@ def main():
             pygame.draw.rect(win,(64,71,92),(200,390,135,50),0,8)
             pygame.draw.rect(win,(line_colour),(200,390,135,50),4,8)
             f = myfont.render('PLAY!',True,line_colour)
-            win.blit(f,(222,396))
+            win.blit(f,(222,396))                            #Buttons!!!
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -199,14 +199,14 @@ def main():
                     exit()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    N = checkclickmain(pos[0],pos[1],i)
+                    N = checkclickmain(pos[0],pos[1],i)   #closure to checking main menu buttons
         return i
 
     def check(solved_mat,question_mat,usermat,o):
-        if usermat == solved_mat:
+        if usermat == solved_mat:             #check if user solved sudoku is correct
             y = str(counter - datetime.timedelta(minutes=1))
             y = y[11:19]
-            highscoreornot = highscores(diff[2],y)
+            highscoreornot = highscores(diff[2],y)  #Check if highscore and store 
             font = pygame.font.Font('./Data/fonts/fredoka One.ttf',25)
             height = 690
             bg_img = pygame.image.load('./Data/Images/background.png').convert()
@@ -242,7 +242,7 @@ def main():
 
 
 
-        N = 1
+        N = 1            #else show wrong entries in red and corrrect ones in green
         f = pygame.font.Font('./Data/fonts/fredoka One.ttf',15)
         b = pygame.image.load('./Data/Images/dim.png').convert_alpha()
         right = pygame.image.load('./Data/Images/right.png').convert_alpha()
@@ -266,7 +266,7 @@ def main():
                     if usermat[i][j] == solved_mat[i][j]:
                         if i == 0 and j == 0:
                             win.blit(righttl,(50+50*j,50+50*i))
-                        elif i == 8 and j == 8:
+                        elif i == 8 and j == 8:                            #special checks for rounded corners
                             win.blit(rightbr,(50+50*j,50+50*i))
                         elif i == 0 and j == 8:
                             win.blit(righttr,(50+50*j,50+50*i))
@@ -286,12 +286,15 @@ def main():
                         else:
                             win.blit(wrong,(50+50*j,50+50*i))
         pygame.display.update()
-        while N:
+        while N:                 #loop for going back to entering number, 
             clock.tick(144)
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     pos = pygame.mouse.get_pos()
                     if pos[0] in range(395,476) and pos[1] in range(616,650):  #return button
+
+                # if return button clicked, go back to normal but keep the user entered numbers on the board
+
                         bg_img = pygame.image.load('./Data/Images/background.png').convert()
                         win.blit(bg_img,(0,o))
                         win.blit(bg_img,(0,-690+o))
@@ -373,15 +376,15 @@ def main():
     pygame.display.set_caption("Sudoku")
     icon = pygame.image.load('./Data/Images/icon.png').convert_alpha()
     pygame.display.set_icon(icon)
-    global clock
+    global clock #to set fps loosely
     clock = pygame.time.Clock()
-    myfont = pygame.font.Font('./Data/fonts/Fredoka One.ttf', 30)
+    myfont = pygame.font.Font('./Data/fonts/Fredoka One.ttf', 30)           #loading fonts and bunch of assets
     bg_img = pygame.image.load('./Data/Images/background.png').convert()
     sidemain = pygame.image.load('./Data/Images/sideblock1.png').convert()
     side = pygame.image.load('./Data/Images/sideblock.png').convert()
     global o
-    o = bg(bg_img,sidemain,1)
-    usermat = copy.deepcopy(mat)
+    o = bg(bg_img,sidemain,1)  #main looping script
+    usermat = copy.deepcopy(mat)  #usermat is used to store user anwsers
 
 
 #drawing the lines
@@ -441,26 +444,30 @@ def main():
     v10 = f.render('CHECK',True,(line_colour))
     win.blit(v10,(410,623))
     pygame.display.update()
-    pygame.time.set_timer(pygame.USEREVENT, 1000)
-    global text, counter, timed
+    pygame.time.set_timer(pygame.USEREVENT, 1000)  #making a userevent that triggers every 1000 miliseconds
+    global text, counter, timed       #counter variables for time keeping
     counter, timed = datetime.datetime(2022, 1, 1, 0, 0, 0), datetime.timedelta(seconds = 1)
     text = ''
+
+
+
+    #main while loop
     while 1:
         for event in pygame.event.get():
-            if event.type == pygame.USEREVENT: 
+            if event.type == pygame.USEREVENT:  # increment time
                 counter += timed
                 t = str(counter)
                 text = t[11:19]
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                pos = pygame.mouse.get_pos()
-                if pos[1] in range(49,501) and pos[0] in range (49,501):   #insert new value
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # on mouse click
+                pos = pygame.mouse.get_pos()  # get mouse coordinates
+                if pos[1] in range(49,501) and pos[0] in range (49,501):
                     i,j = pos[1]//50, pos[0]//50
-                    selindicator = pygame.image.load('./Data/images/selindicator.png').convert_alpha()
+                    selindicator = pygame.image.load('./Data/images/selindicator.png').convert_alpha()  #adds an indicator to remind user 
                     if(mat[i-1][j-1] == 0):
                         pygame.mixer.music.play()
                         win.blit(selindicator,(j*50 + 22, i*50 + 5))
                         pygame.display.update(50,50,450,450)
-                    counter = insert((pos[0]//50, pos[1]//50),counter,tet = text)
+                    counter = insert((pos[0]//50, pos[1]//50),counter,tet = text)      #insert new value and deleting values
                 if pos[0] in range(395,476) and pos[1] in range(616,650):  #check button
                     counter = counter + datetime.timedelta(minutes=1)
                     check(solved_mat,mat,usermat,o)
