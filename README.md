@@ -6,3 +6,7 @@ Feel free to shoot me a message telling me how I can do things better or to just
 
 ## How do I Play?
 Grab the latest Release, Unzip, and Run the Application
+
+## Dependencies 
+- Python 3.x
+- pygame
