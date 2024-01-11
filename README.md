@@ -9,6 +9,12 @@ This Repo contains code for a Sudoku application written in Python using the Pyg
 - Dynamic Puzzle Generation: Never run out of challenges! The app dynamically generates new puzzles, guaranteeing a limitless supply of Sudoku grids to keep you entertained and engaged.
 - Solver Functionality: Stuck on a puzzle? No problem. Utilize the built-in solver feature to receive hints or solutions, allowing you to learn and improve your Sudoku-solving strategies.
 
+## Screenshots
+![app](https://github.com/Sourabh-Mallapur/TISS-A-Sudoku-Application/blob/main/sudoku_4fyvsMIs15.gif)
+
+### Resource Utilisation
+![memusage](https://github.com/Sourabh-Mallapur/TISS-A-Sudoku-Application/blob/main/Capture.PNG)
+
 ## How do I Play?
 Grab the latest Release, Unzip, and Run the Application
 
